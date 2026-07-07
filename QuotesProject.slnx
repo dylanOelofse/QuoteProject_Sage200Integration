@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Project Path="IntegrationPollingService/IntegrationPollingService.csproj" Id="e5e451ac-9dc9-42c8-ae87-cecf95cb7305" />
+  <Project Path="IntegrationService/IntegrationService.csproj" Id="d020fab9-664a-4d79-9714-1cfecfc887f1" />
+  <Project Path="QuotesProject/QuotesProject.csproj" />
+</Solution>

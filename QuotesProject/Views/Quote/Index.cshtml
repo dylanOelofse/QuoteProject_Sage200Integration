@@ -1,0 +1,261 @@
+﻿@model QuoteViewModel
+@{
+    ViewData["Title"] = "Quotes";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Quotes List</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Create Quote</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Customer</label>
+                    <input id="customer" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Address</label>
+                    <input id="address" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">External Order Number</label>
+                    <input id="externalOrderNumber" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Order Date</label>
+                    <input id="orderDate" type="date" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Due Date</label>
+                    <input id="dueDate" type="date" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Invoice Date</label>
+                    <input id="invoiceDate" type="date" class="form-control" />
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary" onclick="createQuote()">
+                        Create Quote
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <table id="quotesTable" class=" table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Quote Number</th>
+                <th>Customer</th>
+                <th>Address</th>
+                <th>External Order #</th>
+                <th>Order Date</th>
+                <th>Due Date</th>
+                <th>Invoice Date</th>
+                <th style="width: 220px;">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var q in Model.Quotes)
+            {
+                <tr data-id="@q.Id">
+
+                    <!-- Quote Number (NOT editable) -->
+                    <td data-search="@q.QuoteNumber" data-order="@q.QuoteNumber">
+                        <input class="form-control" value="@q.QuoteNumber" disabled />
+                    </td>
+
+                    <td data-search="@q.Customer" data-order="@q.Customer">
+                        <input class="form-control customer" value="@q.Customer" />
+                    </td>
+
+                    <td data-search="@q.Address" data-order="@q.Address">
+                        <input class="form-control address" value="@q.Address" />
+                    </td>
+
+                    <td data-search="@q.ExternalOrderNumber" data-order="@q.ExternalOrderNumber">
+                        <input class="form-control externalOrderNumber" value="@q.ExternalOrderNumber" />
+                    </td>
+
+                    <td data-search="@q.OrderDate?.ToString("yyyy/MM/dd")" data-order="@q.OrderDate?.ToString("yyyy/MM/dd")">
+                        <input type="date" class="form-control orderDate"
+                               value="@q.OrderDate?.ToString("yyyy-MM-dd")" />
+                    </td>
+
+                    <td data-search="@q.DueDate?.ToString("yyyy/MM/dd")" data-order="@q.DueDate?.ToString("yyyy/MM/dd")">
+                        <input type="date" class="form-control dueDate"
+                               value="@q.DueDate?.ToString("yyyy-MM-dd")" />
+                    </td>
+
+                    <td data-search="@q.InvoiceDate?.ToString("yyyy/MM/dd")" data-order="@q.InvoiceDate?.ToString("yyyy/MM/dd")">
+                        <input type="date" class="form-control invoiceDate"
+                               value="@q.InvoiceDate?.ToString("yyyy-MM-dd")" />
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="updateQuote(this)">
+                            Save
+                        </button>
+
+                        <button class="btn btn-sm btn-danger" onclick="deleteQuote(this)">
+                            Delete
+                        </button>
+
+                        <button class="btn btn-sm btn-primary" onclick="viewQuoteLines(this)">
+                            View
+                        </button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+
+<!-- jQuery, Bootstrap and DataTables are all loaded from _Layout.cshtml. -->
+<script>
+
+     $(document).ready(function () {
+
+        $('#quotesTable').DataTable({
+
+            pageLength: 20,
+
+            lengthMenu: [
+                [20, 50, 100, -1],
+                [20, 50, 100, "All"]
+            ],
+
+            responsive: true,
+
+            stateSave: true,
+
+            autoWidth: false,
+
+            order: [[0, "desc"]],
+
+            language: {
+                search: "Search:",
+                searchPlaceholder: "Search quotes..."
+            },
+
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: 7 // Actions column
+                }
+            ]
+
+        });
+
+    });
+
+
+    function getRowData(btn) {
+        const row = btn.closest("tr");
+
+        return {
+            id: parseInt(row.dataset.id),
+            customer: row.querySelector(".customer").value,
+            address: row.querySelector(".address").value,
+            externalOrderNumber: row.querySelector(".externalOrderNumber").value,
+            orderDate: row.querySelector(".orderDate").value || null,
+            dueDate: row.querySelector(".dueDate").value || null,
+            invoiceDate: row.querySelector(".invoiceDate").value || null
+        };
+    }
+
+    function createQuote() {
+
+        const quote = {
+            customer: document.getElementById("customer").value,
+            address: document.getElementById("address").value,
+            externalOrderNumber: document.getElementById("externalOrderNumber").value,
+            orderDate: document.getElementById("orderDate").value || null,
+            dueDate: document.getElementById("dueDate").value || null,
+            invoiceDate: document.getElementById("invoiceDate").value || null
+        };
+
+        fetch("/Quote", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(quote)
+        })
+        .then(async res => {
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(`Create failed (${res.status}): ${msg}`);
+            }
+
+            alert("Quote created successfully.");
+            window.location.reload();
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function updateQuote(btn) {
+        const data = getRowData(btn);
+
+        fetch("/Quote", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(async res => {
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(`Update failed (${res.status}): ${msg}`)
+            }
+            
+            alert("Quote updated successfully.");
+            window.location.reload();
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function deleteQuote(btn) {
+        const row = btn.closest("tr");
+        const id = row.dataset.id;
+
+        if (!confirm("Are you sure you want to delete this quote?")) return;
+
+        fetch(`/Quote/${id}`, {
+            method: "DELETE"
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Delete failed");
+            window.location.reload();
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function viewQuoteLines(btn) {
+        const row = btn.closest("tr");
+        const quoteId = row.getAttribute("data-id");
+
+        window.location.href = `/QuoteLine/Index?quoteId=${encodeURIComponent(quoteId)}`;
+    }
+</script>
+}

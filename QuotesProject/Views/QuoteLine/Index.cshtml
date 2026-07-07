@@ -1,0 +1,216 @@
+﻿@model QuoteLineViewModel
+
+@{
+    ViewData["Title"] = "Quote Lines";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-4">
+
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            Quote Details
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Quote Number:</strong><br />
+                    @Model.quoteOpened.QuoteNumber
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Customer:</strong><br />
+                    @Model.quoteOpened.Customer
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Address:</strong><br />
+                    @Model.quoteOpened.Address
+                </div>
+
+                <div class="col-md-3">
+                    <strong>External Order #:</strong><br />
+                    @Model.quoteOpened.ExternalOrderNumber
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Create Quote Line
+        </div>
+
+        <div class="card-body">
+
+            <!-- Hidden Quote Id (FK for quote lines) -->
+            <input type="hidden" id="quoteId" value="@Model.quoteOpened.Id" />
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Item</label>
+                    <input id="item" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Quantity</label>
+                    <input id="quantity" type="number" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Price</label>
+                    <input id="price" type="number" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Discount</label>
+                    <input id="discount" type="number" class="form-control" />
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary mt-2" onclick="createLine()">
+                        Add Line
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Quote Lines Table -->
+    <!-- ===================== -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            Quote Lines
+        </div>
+
+        <div class="card-body p-0">
+
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th style="width: 160px;">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var line in Model.quoteLines)
+                    {
+                        <tr data-id="@line.LineId">
+
+                            <td>
+                                <input class="form-control item" value="@line.Item" />
+                            </td>
+
+                            <td>
+                                <input class="form-control quantity" type="number" value="@line.Quantity" />
+                            </td>
+
+                            <td>
+                                <input class="form-control price" type="number" value="@line.Price" />
+                            </td>
+
+                            <td>
+                                <input class="form-control discount" type="number" value="@line.Discount" />
+                            </td>
+
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="updateLine(this)">Save</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteLine(this)">Delete</button>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    function getLineData(btn) {
+        const row = btn.closest("tr");
+
+        return {
+            lineId: parseInt(row.dataset.id),
+            quoteId: parseInt(document.getElementById("quoteId").value),
+            item: row.querySelector(".item").value,
+            quantity: parseFloat(row.querySelector(".quantity").value),
+            price: parseFloat(row.querySelector(".price").value),
+            discount: parseFloat(row.querySelector(".discount").value || 0)
+        };
+    }
+
+    function createLine() {
+
+        const data = {
+            quoteId: parseInt(document.getElementById("quoteId").value),
+            item: document.getElementById("item").value,
+            quantity: parseFloat(document.getElementById("quantity").value),
+            price: parseFloat(document.getElementById("price").value),
+            discount: parseFloat(document.getElementById("discount").value || 0)
+        };
+
+        fetch("/QuoteLine", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to create line");
+            location.reload();
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function updateLine(btn) {
+
+        const data = getLineData(btn);
+
+        fetch("/QuoteLine", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Update failed");
+            location.reload();
+
+            alert("Line updated successfully.");
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function deleteLine(btn) {
+
+        const row = btn.closest("tr");
+        const id = row.dataset.id;
+
+        fetch(`/QuoteLine/${id}`, {
+            method: "DELETE"
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Delete failed");
+            location.reload();
+        })
+        .catch(err => alert(err.message));
+    }
+
+</script>
