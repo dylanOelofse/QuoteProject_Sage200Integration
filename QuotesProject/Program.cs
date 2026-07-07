@@ -4,7 +4,6 @@ using QuotesProject.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Initialize the database engine
