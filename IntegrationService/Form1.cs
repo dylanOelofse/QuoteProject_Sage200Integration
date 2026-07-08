@@ -14,7 +14,7 @@ namespace IntegrationService
         {
             InitializeComponent();
         
-            var json = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "settings.json"));
+            var json = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "settings2.json"));
             var cfg = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
             companyDB = cfg["CompanyDB"];

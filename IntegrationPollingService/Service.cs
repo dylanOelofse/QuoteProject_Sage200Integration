@@ -41,10 +41,8 @@ namespace IntegrationPollingService
             }
 
             catch (Exception ex)
-
             {
-                Console.WriteLine("Error");
-                // Log this into DB
+                Console.WriteLine(ex.ToString());   // log his into db
             }
 
             finally

@@ -15,7 +15,7 @@ namespace IntegrationPollingService
 
         static SyncSageQuotes()
         {
-            var json = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "settings.json"));
+            var json = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "settings1.json"));
             var cfg = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
             companyDB = cfg["CompanyDB"];
