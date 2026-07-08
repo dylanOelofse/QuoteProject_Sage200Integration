@@ -30,10 +30,18 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Quote}/{action=Index}/{id?}")
-    .WithStaticAssets();
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/Quote");
+    return Task.CompletedTask;
+});
 
+app.MapControllers();
+
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Quote}/{action=Index}/{id?}")
+//    .WithStaticAssets();
+// Not using conventional routing , using attribute routing instead. LaunchSetings specifies launch URL
 
 app.Run();

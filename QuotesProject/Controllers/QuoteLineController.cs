@@ -5,6 +5,7 @@ using QuotesProject.Services;
 
 namespace QuotesProject.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class QuoteLineController : Controller
     {
@@ -59,7 +60,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateQuoteLine([FromBody] QuoteLine quoteLine)
+        public IActionResult CreateQuoteLine(QuoteLine quoteLine)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -80,7 +81,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateQuoteLine([FromBody] QuoteLine quoteLine)
+        public IActionResult UpdateQuoteLine(QuoteLine quoteLine)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

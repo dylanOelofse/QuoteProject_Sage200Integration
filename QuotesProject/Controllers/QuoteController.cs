@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace QuotesProject.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class QuoteController : Controller
     {
@@ -15,7 +16,7 @@ namespace QuotesProject.Controllers
             _quoteService = quoteService;
         }
 
-        [HttpGet("/")]
+        [HttpGet]
         public IActionResult Index()
         {
             var quotes = _quoteService.GetQuotes();
@@ -39,7 +40,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateQuote([FromBody] Quote quote)
+        public IActionResult CreateQuote(Quote quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -60,7 +61,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateQuote([FromBody] Quote quote)
+        public IActionResult UpdateQuote(Quote quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
