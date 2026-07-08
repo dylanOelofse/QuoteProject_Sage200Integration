@@ -13,24 +13,9 @@ namespace QuotesProject.Services
 
             var quotes = new List<Quote>();
 
-            //for (int i = 0; i < 60; i++)
-            //{
-            //    DataRow row = quotesTable.Rows[i];
-            //    quotes.Add(new Quote
-            //    {
-            //        Id = Convert.ToInt32(row["QuoteId"]),
-            //        QuoteNumber = row["QuoteNumber"].ToString(),
-            //        Customer = row["Customer"].ToString(),
-            //        Address = row["Address"].ToString(),
-            //        ExternalOrderNumber = row["ExternalOrderNumber"].ToString(),
-            //        OrderDate = row["OrderDate"] == DBNull.Value ? null : Convert.ToDateTime(row["OrderDate"]),
-            //        DueDate = row["DueDate"] == DBNull.Value ? null : Convert.ToDateTime(row["DueDate"]),
-            //        InvoiceDate = row["InvoiceDate"] == DBNull.Value ? null : Convert.ToDateTime(row["InvoiceDate"]),
-            //    });
-            //}
-
-            foreach (DataRow row in quotesTable.Rows)
+            for (int i = 0; i < 60; i++)
             {
+                DataRow row = quotesTable.Rows[i];
                 quotes.Add(new Quote
                 {
                     Id = Convert.ToInt32(row["QuoteId"]),
@@ -43,6 +28,21 @@ namespace QuotesProject.Services
                     InvoiceDate = row["InvoiceDate"] == DBNull.Value ? null : Convert.ToDateTime(row["InvoiceDate"]),
                 });
             }
+
+            //foreach (DataRow row in quotesTable.Rows)
+            //{
+            //    quotes.Add(new Quote
+            //    {
+            //        Id = Convert.ToInt32(row["QuoteId"]),
+            //        QuoteNumber = row["QuoteNumber"].ToString(),
+            //        Customer = row["Customer"].ToString(),
+            //        Address = row["Address"].ToString(),
+            //        ExternalOrderNumber = row["ExternalOrderNumber"].ToString(),
+            //        OrderDate = row["OrderDate"] == DBNull.Value ? null : Convert.ToDateTime(row["OrderDate"]),
+            //        DueDate = row["DueDate"] == DBNull.Value ? null : Convert.ToDateTime(row["DueDate"]),
+            //        InvoiceDate = row["InvoiceDate"] == DBNull.Value ? null : Convert.ToDateTime(row["InvoiceDate"]),
+            //    });
+            //}
 
             return quotes;
         }

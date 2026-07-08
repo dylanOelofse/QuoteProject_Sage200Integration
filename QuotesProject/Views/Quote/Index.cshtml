@@ -58,6 +58,7 @@
     <table id="quotesTable" class=" table table-bordered table-hover align-middle">
         <thead class="table-dark">
             <tr>
+                <th>QuoteId</th>
                 <th>Quote Number</th>
                 <th>Customer</th>
                 <th>Address</th>
@@ -73,6 +74,9 @@
             @foreach (var q in Model.Quotes)
             {
                 <tr data-id="@q.Id">
+
+                    <!-- QuoteId (hidden, used for sorting newest-first) -->
+                    <td>@q.Id</td>
 
                     <!-- Quote Number (NOT editable) -->
                     <td data-search="@q.QuoteNumber" data-order="@q.QuoteNumber">
@@ -149,7 +153,7 @@
 
             autoWidth: false,
 
-            order: [[0, "desc"]],
+            order: [[0, "desc"]], // QuoteId column, newest first
 
             language: {
                 search: "Search:",
@@ -158,8 +162,12 @@
 
             columnDefs: [
                 {
+                    visible: false,
+                    targets: 0 // QuoteId column (hidden, sort key only)
+                },
+                {
                     orderable: false,
-                    targets: 7 // Actions column
+                    targets: 8 // Actions column
                 }
             ]
 
