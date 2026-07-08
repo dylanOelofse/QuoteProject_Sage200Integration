@@ -47,7 +47,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteService.CreateQuote(quote);
-                return Ok();
+                return Ok(quote);
             }
             catch (ArgumentException ex)
             {
@@ -68,7 +68,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteService.UpdateQuote(quote);
-                return Ok();
+                return Ok(quote);
             }
             catch (ArgumentException ex)
             {

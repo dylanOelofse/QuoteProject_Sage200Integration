@@ -88,7 +88,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteLineService.UpdateQuoteLine(quoteLine);
-                return Ok();
+                return Ok(quoteLine);
             }
             catch (ArgumentException ex)
             {
@@ -110,7 +110,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteLineService.DeleteQuoteLine(lineId);
-                return Ok();
+                return Ok(lineId);
             }
             catch (KeyNotFoundException)
             {
