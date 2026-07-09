@@ -18,7 +18,7 @@ namespace QuotesProject.Controllers
             _quoteLineService = quoteLineService;
         }
 
-        [HttpGet("Index")]
+        [HttpGet]
         public IActionResult Index(int quoteId)
         {
             try
@@ -68,7 +68,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteLineService.CreateQuoteLine(quoteLine);
-                return Ok();
+                return Ok(quoteLine);
             }
             catch (ArgumentException ex)
             {
@@ -89,7 +89,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteLineService.UpdateQuoteLine(quoteLine);
-                return Ok(quoteLine);
+                return RedirectToAction("Index");
             }
             catch (ArgumentException ex)
             {
@@ -111,7 +111,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteLineService.DeleteQuoteLine(lineId);
-                return Ok(lineId);
+                return Ok();
             }
             catch (KeyNotFoundException)
             {

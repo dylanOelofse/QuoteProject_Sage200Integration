@@ -221,8 +221,7 @@ namespace QuotesProject.Data
                                 Discount
                             FROM QuoteLine
                             WHERE QuoteId = @QuoteId
-                            AND Flag IS NULL 
-                            OR Flag = 'us'
+                            AND (Flag IS NULL OR Flag = 'us')
                             ORDER BY LineId DESC";
 
             using var command = new SqlCommand(query);

@@ -48,7 +48,7 @@ namespace QuotesProject.Controllers
             try
             {
                 _quoteService.CreateQuote(quote);
-                return Ok(quote);
+                return Ok(quote);  //since windows.reload on js
             }
             catch (ArgumentException ex)
             {
