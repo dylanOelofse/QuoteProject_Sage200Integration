@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuotesProject.Interfaces;
 using QuotesProject.Models;
 using QuotesProject.Services;
@@ -7,6 +8,7 @@ namespace QuotesProject.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class QuoteLineController : Controller
     {
         private readonly IQuoteService _quoteService;
@@ -60,6 +62,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateQuoteLine(QuoteLine quoteLine)
         {
             if (!ModelState.IsValid)
@@ -81,6 +84,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public IActionResult UpdateQuoteLine(QuoteLine quoteLine)
         {
             if (!ModelState.IsValid)
@@ -106,6 +110,7 @@ namespace QuotesProject.Controllers
         }
 
         [HttpDelete("{lineId}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteQuoteLine(int lineId)
         {
             try

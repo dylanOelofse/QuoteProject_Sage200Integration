@@ -23,6 +23,34 @@
                     Quotes Manager
                 </a>
 
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="d-flex align-items-center">
+                        <span class="navbar-text me-3">
+                            @User.Identity.Name @(User.IsInRole("Admin") ? "(Admin)" : "(User)")
+                        </span>
+
+                        <!-- Anti-forgery token so the logout POST passes [ValidateAntiForgeryToken] -->
+                        @Html.AntiForgeryToken()
+
+                        <button class="btn btn-outline-secondary btn-sm" onclick="logout()">
+                            Logout
+                        </button>
+                    </div>
+
+                    <script>
+                        function logout() {
+                            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                            fetch("/Login/Logout", {
+                                method: "POST",
+                                headers: { "RequestVerificationToken": token }
+                            })
+                            .then(() => window.location.href = "/Login");
+                        }
+                    </script>
+                }
+
             </div>
         </nav>
     </header>

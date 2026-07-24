@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Create User</h5>
+                </div>
+
+                <div class="card-body">
+
+                    @Html.AntiForgeryToken()
+
+                    <div id="createError" class="alert alert-danger d-none" role="alert"></div>
+                    <div id="createSuccess" class="alert alert-success d-none" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input id="username" class="form-control" autofocus />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input id="password" type="password" class="form-control" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input id="isAdmin" type="checkbox" class="form-check-input" />
+                        <label class="form-check-label" for="isAdmin">Admin (can create/update/delete)</label>
+                    </div>
+
+                    <button class="btn btn-primary w-100" onclick="createUser()">
+                        Create User
+                    </button>
+
+                    <a href="/Quote" class="btn btn-link w-100 mt-2">Back to Quotes</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+<script>
+
+    function createUser() {
+
+        const newUser = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            isAdmin: document.getElementById("isAdmin").checked ? 1 : 0
+        };
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch("/User", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token
+            },
+            body: JSON.stringify(newUser)
+        })
+        .then(async res => {
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || `Create failed (${res.status})`);
+            }
+
+            showSuccess(`User "${newUser.username}" created successfully.`);
+
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("isAdmin").checked = false;
+        })
+        .catch(err => showError(err.message));
+    }
+
+    function showError(message) {
+        document.getElementById("createSuccess").classList.add("d-none");
+        const errorBox = document.getElementById("createError");
+        errorBox.textContent = message;
+        errorBox.classList.remove("d-none");
+    }
+
+    function showSuccess(message) {
+        document.getElementById("createError").classList.add("d-none");
+        const successBox = document.getElementById("createSuccess");
+        successBox.textContent = message;
+        successBox.classList.remove("d-none");
+    }
+
+</script>
+}

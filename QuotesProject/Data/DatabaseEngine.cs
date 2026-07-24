@@ -79,6 +79,67 @@ namespace QuotesProject.Data
             }
         }
 
+        public static void UpdatePasswordHash(int userId, string newPasswordHash)
+        {
+            string query = @"
+                            UPDATE      Users
+                            SET         Password = @Password
+                            WHERE       UserId = @UserId";
+
+            using var command = new SqlCommand(query);
+
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@Password", newPasswordHash);
+
+            ExecuteNonQuery(command);
+        }
+
+        //Users
+
+        public static DataTable GetUserByUsername(string username)
+        {
+            string query = @"
+                            SELECT
+                                UserId,
+                                UserName,
+                                Password,
+                                IsAdmin
+                            FROM Users
+                            WHERE UserName = @UserName";
+
+            using var command = new SqlCommand(query);
+
+            command.Parameters.AddWithValue("@UserName", username);
+
+            return ExecuteDataTable(command);
+        }
+
+        public static void CreateUser(User user)
+        {
+            string query = @"
+                        INSERT INTO Users
+                        (
+                        Username,
+                        Password,
+                        IsAdmin
+                        )
+                        VALUES
+                        (
+                        @Username,
+                        @Password,
+                        @IsAdmin
+                        )";
+
+            using var command = new SqlCommand(query);
+
+            command.Parameters.AddWithValue("@Username", user.Username);
+            command.Parameters.AddWithValue("@Password", user.Password);
+            command.Parameters.AddWithValue("@IsAdmin", user.IsAdmin);
+
+            ExecuteNonQuery(command);
+        }
+
+
         //Quotes
 
         public static DataTable GetAllQuotes()

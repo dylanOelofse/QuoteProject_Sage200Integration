@@ -26,6 +26,17 @@ namespace QuotesProject.Services
                 });
             }
 
+            //var quoteLines = quoteLinesTable.AsEnumerable().Select(row => new QuoteLine
+            //{
+            //    LineId = Convert.ToInt32(row["LineId"]),
+            //    QuoteId = quoteId,
+            //    Item = row["Item"].ToString(),
+            //    Quantity = Convert.ToDecimal(row["Quantity"]),
+            //    Price = Convert.ToDecimal(row["Price"]),
+            //    Discount = Convert.ToDecimal(row["Discount"])
+            //})
+            //.ToList();
+
             return quoteLines;
         }
 

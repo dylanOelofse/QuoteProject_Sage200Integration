@@ -1,63 +1,85 @@
 ﻿@model QuoteViewModel
 @{
     ViewData["Title"] = "Quotes";
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container mt-4">
 
-    <h2 class="mb-4">Quotes List</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Quotes List</h2>
 
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Create Quote</h5>
-        </div>
+        <div class="d-flex gap-2">
+            @if (isAdmin)
+            {
+                <a href="/User" class="btn btn-outline-primary">
+                    Create User
+                </a>
+            }
 
-        <div class="card-body">
-            <div class="row g-3">
+            <button class="btn btn-outline-success" onclick="window.location.href='/Quote/exportall'">Export All</button>
+            <button class="btn btn-primary" onclick="generateStatement()">Generate Statement</button>
 
-                <div class="col-md-4">
-                    <label class="form-label">Customer</label>
-                    <input id="customer" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Address</label>
-                    <input id="address" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">External Order Number</label>
-                    <input id="externalOrderNumber" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Order Date</label>
-                    <input id="orderDate" type="date" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Due Date</label>
-                    <input id="dueDate" type="date" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Invoice Date</label>
-                    <input id="invoiceDate" type="date" class="form-control" />
-                </div>
-
-                <div class="col-12">
-                    <button class="btn btn-primary" onclick="createQuote()">
-                        Create Quote
-                    </button>
-                </div>
-
-            </div>
         </div>
     </div>
+
+    @if (isAdmin)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Create Quote</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Customer</label>
+                        <input id="customer" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Address</label>
+                        <input id="address" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">External Order Number</label>
+                        <input id="externalOrderNumber" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Order Date</label>
+                        <input id="orderDate" type="date" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Due Date</label>
+                        <input id="dueDate" type="date" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Invoice Date</label>
+                        <input id="invoiceDate" type="date" class="form-control" disabled="@(!isAdmin)" />
+                    </div>
+
+                    <div class="col-12">
+                        <button class="btn btn-primary" onclick="createQuote()" disabled="@(!isAdmin)">
+                            Create Quote
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
 
     <table id="quotesTable" class=" table table-bordered table-hover align-middle">
         <thead class="table-dark">
             <tr>
+                <th style="width:34px;">
+                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" />
+                </th>
                 <th>QuoteId</th>
                 <th>Quote Number</th>
                 <th>Customer</th>
@@ -66,7 +88,7 @@
                 <th>Order Date</th>
                 <th>Due Date</th>
                 <th>Invoice Date</th>
-                <th style="width: 220px;">Actions</th>
+                <th style="width: 300px;" class="text-nowrap">Actions</th>
             </tr>
         </thead>
 
@@ -75,54 +97,55 @@
             {
                 <tr data-id="@q.Id">
 
-                    <!-- QuoteId (hidden, used for sorting newest-first) -->
+                    <td><input type="checkbox" class="rowCheck" value="@q.Id" /></td>
+
+                    <!-- QuoteId hidden, used for sorting newest first -->
                     <td>@q.Id</td>
 
-                    <!-- Quote Number (NOT editable) -->
+                    <!-- Quote Number NOT editable -->
                     <td data-search="@q.QuoteNumber" data-order="@q.QuoteNumber">
                         <input class="form-control" value="@q.QuoteNumber" disabled />
                     </td>
 
                     <td data-search="@q.Customer" data-order="@q.Customer">
-                        <input class="form-control customer" value="@q.Customer" />
+                        <input class="form-control customer" value="@q.Customer" disabled="@(!isAdmin)" />
                     </td>
 
                     <td data-search="@q.Address" data-order="@q.Address">
-                        <input class="form-control address" value="@q.Address" />
+                        <input class="form-control address" value="@q.Address" disabled="@(!isAdmin)" />
                     </td>
 
                     <td data-search="@q.ExternalOrderNumber" data-order="@q.ExternalOrderNumber">
-                        <input class="form-control externalOrderNumber" value="@q.ExternalOrderNumber" />
+                        <input class="form-control externalOrderNumber" value="@q.ExternalOrderNumber" disabled="@(!isAdmin)" />
                     </td>
 
                     <td data-search="@q.OrderDate?.ToString("yyyy/MM/dd")" data-order="@q.OrderDate?.ToString("yyyy/MM/dd")">
                         <input type="date" class="form-control orderDate"
-                               value="@q.OrderDate?.ToString("yyyy-MM-dd")" />
+                               value="@q.OrderDate?.ToString("yyyy-MM-dd")" disabled="@(!isAdmin)" />
                     </td>
 
                     <td data-search="@q.DueDate?.ToString("yyyy/MM/dd")" data-order="@q.DueDate?.ToString("yyyy/MM/dd")">
                         <input type="date" class="form-control dueDate"
-                               value="@q.DueDate?.ToString("yyyy-MM-dd")" />
+                               value="@q.DueDate?.ToString("yyyy-MM-dd")" disabled="@(!isAdmin)" />
                     </td>
 
                     <td data-search="@q.InvoiceDate?.ToString("yyyy/MM/dd")" data-order="@q.InvoiceDate?.ToString("yyyy/MM/dd")">
                         <input type="date" class="form-control invoiceDate"
-                               value="@q.InvoiceDate?.ToString("yyyy-MM-dd")" />
+                               value="@q.InvoiceDate?.ToString("yyyy-MM-dd")" disabled="@(!isAdmin)" />
                     </td>
 
                     <!-- Actions -->
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="updateQuote(this)">
-                            Save
-                        </button>
+                    <td class="text-nowrap">
+                        @if (isAdmin)
+                        {
+                            <button class="btn btn-sm btn-success me-1" onclick="updateQuote(this)">Save</button>
 
-                        <button class="btn btn-sm btn-danger" onclick="deleteQuote(this)">
-                            Delete
-                        </button>
+                            <button class="btn btn-sm btn-danger me-1" onclick="deleteQuote(this)">Delete</button>
+                        }
 
-                        <button class="btn btn-sm btn-primary" onclick="viewQuoteLines(this)">
-                            View
-                        </button>
+                        <button class="btn btn-sm btn-primary me-1" onclick="viewQuoteLines(this)">View</button>
+
+                        <button class="btn btn-sm btn-outline-success" onclick="exportQuote(this)">Export</button>
                     </td>
 
                 </tr>
@@ -133,7 +156,6 @@
 
 @section Scripts {
 
-<!-- jQuery, Bootstrap and DataTables are all loaded from _Layout.cshtml. -->
 <script>
 
      $(document).ready(function () {
@@ -153,7 +175,7 @@
 
             autoWidth: false,
 
-            order: [[0, "desc"]], // QuoteId column, newest first
+            order: [[1, "desc"]], // QuoteId column (shifted to 1 by the checkbox column), newest first
 
             language: {
                 search: "Search:",
@@ -161,18 +183,21 @@
             },
 
             columnDefs: [
+                { 
+                    orderable: false, 
+                    searchable: false, 
+                    targets: 0 
+                },
                 {
                     visible: false,
-                    targets: 0 // QuoteId column (hidden, sort key only)
+                    targets: 1 // QuoteId column , can use d-none bootstrap class or style="display:none
                 },
                 {
                     orderable: false,
-                    targets: 8 // Actions column
+                    targets: 9 // Actions column
                 }
             ]
-
         });
-
     });
 
 
@@ -188,6 +213,11 @@
             dueDate: row.querySelector(".dueDate").value || null,
             invoiceDate: row.querySelector(".invoiceDate").value || null
         };
+    }
+
+    function exportQuote(btn) {
+        const id = btn.closest("tr").dataset.id;
+        window.location.href = `/Quote/export/${id}`;
     }
 
     function createQuote() {
@@ -264,6 +294,52 @@
         const quoteId = row.getAttribute("data-id");
 
         window.location.href = `/QuoteLine/?quoteId=${encodeURIComponent(quoteId)}`;
+    }
+
+    // ---- Statements ----
+
+    // header checkbox → tick/untick every visible row checkbox
+    function toggleSelectAll(source) {
+        document.querySelectorAll(".rowCheck").forEach(cb => cb.checked = source.checked);
+    }
+
+    // the ticked QuoteIds
+    function getSelectedIds() {
+        return Array.from(document.querySelectorAll(".rowCheck:checked"))
+                    .map(cb => parseInt(cb.value));
+    }
+
+    // build the statement PDFs on the server and download them:
+    // one quote → a single PDF, several → a flat zip of PDFs
+    function generateStatement() {
+        const ids = getSelectedIds();
+        if (ids.length === 0) { alert("Please select at least one quote."); return; }
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch("/Quote/generateStatement", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token
+            },
+            body: JSON.stringify(ids)
+        })
+        .then(async res => {
+            if (!res.ok) throw new Error(await res.text());
+
+            // turn the file response into a browser download
+            const blob = await res.blob();
+            const dispo = res.headers.get("Content-Disposition") || "";
+            const match = dispo.match(/filename="?([^";]+)"?/);
+            const name = match ? match[1] : "statement.pdf";
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = name; a.click();
+            URL.revokeObjectURL(url);
+        })
+        .catch(err => alert(err.message));
     }
 </script>
 }

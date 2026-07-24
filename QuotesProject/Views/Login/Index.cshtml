@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Login</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Creates Anti-forgery token for CSRF protection -->
+                    @Html.AntiForgeryToken()
+
+                    <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input id="username" class="form-control" autofocus />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input id="password" type="password" class="form-control" />
+                    </div>
+
+                    <button class="btn btn-primary w-100" onclick="login()">
+                        Login
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+<script>
+
+    function login() {
+
+        const credentials = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        };
+
+        // fetches the Anti-forgery token for [ValidateAntiForgeryToken] in the controller, we need to send the token in the header
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch("/Login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token
+            },
+            body: JSON.stringify(credentials)
+        })
+        .then(async res => {
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || `Login failed (${res.status})`);
+            }
+
+            window.location.href = "/Quote";
+        })
+        .catch(err => showError(err.message));
+    }
+
+    function showError(message) {
+        const errorBox = document.getElementById("loginError");
+        errorBox.textContent = message;
+        errorBox.classList.remove("d-none");
+    }
+
+    // Submit on Enter from either field
+    ["username", "password"].forEach(id => {
+        document.getElementById(id).addEventListener("keyup", e => {
+            if (e.key === "Enter") login();
+        });
+    });
+
+</script>
+}
