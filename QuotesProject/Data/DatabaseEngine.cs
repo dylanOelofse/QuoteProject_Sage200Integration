@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Docker.DotNet.Models;
+using Microsoft.Data.SqlClient;
 using QuotesProject.Models;
 using System.Data;
 
@@ -350,6 +351,9 @@ namespace QuotesProject.Data
         public static void UpdateQuoteLine(QuoteLine quoteLine)
         {
             string query = @"
+                            SET XACT_ABORT ON;
+                            BEGIN TRAN;
+
                             UPDATE QuoteLine
                             SET
                                 Item = @Item,
@@ -363,7 +367,9 @@ namespace QuotesProject.Data
                             SET
                                 Flag = 'up'
                             WHERE 
-                                QuoteId = @QuoteId";
+                                QuoteId = @QuoteId
+
+                            COMMIT";
 
             using var command = new SqlCommand(query);
 

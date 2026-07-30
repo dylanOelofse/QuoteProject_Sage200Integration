@@ -21,21 +21,27 @@ namespace QuotesProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int quoteId)
+        public IActionResult Index()
         {
+            int? quoteId = HttpContext.Session.GetInt32("OpenQuoteId");
+
+            if (quoteId is null)                                // session expired, or landed here directly
+                return RedirectToAction("Index", "Quote");
+
             try
             {
                 QuoteLineViewModel model = new QuoteLineViewModel
                 {
-                    quoteOpened = _quoteService.GetQuoteById(quoteId),
-                    quoteLines = _quoteLineService.GetQuoteLines(quoteId)
+                    quoteOpened = _quoteService.GetQuoteById(quoteId.Value),
+                    quoteLines = _quoteLineService.GetQuoteLines(quoteId.Value)
                 };
 
                 return View(model);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound("Quote not found.");
+                HttpContext.Session.Remove("OpenQuoteId");      // id no longer resolves - drop it so we don't loop back here
+                return RedirectToAction("Index", "Quote");
             }
             catch (Exception ex)
             {

@@ -1,0 +1,20 @@
+services:
+  quotesproject:
+    build:
+      context: .
+      dockerfile: QuotesProject/Dockerfile
+    image: quotesproject
+    container_name: quotesproject
+    ports:
+      - "8080:8080"
+    environment:
+      # Overrides the connection string in appsettings.json for container runs.
+      # host.docker.internal = the machine running Docker. If SQL Server lives on a
+      # different machine, replace it with that machine's IP/hostname (e.g. 192.168.x.x,1433).
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER:-host.docker.internal},1433;Database=QuoteProjectOriginal;User Id=sa;Password=${DB_PASSWORD:-1234};TrustServerCertificate=True;"
+      # DevExpress runtime license key, loaded from the .env file next to this compose file.
+      DevExpress_License: ${DevExpress_License:-}
+    extra_hosts:
+      # Makes host.docker.internal resolve on native Linux Docker too (no-op on Docker Desktop).
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

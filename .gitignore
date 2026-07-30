@@ -4,3 +4,8 @@ obj/
 *.user
 settings1.json
 settings2.json
+launchSettings.json
+.env
+
+# Docker deploy artifacts - image tars are rebuilt from the Dockerfile, not versioned
+deploy/

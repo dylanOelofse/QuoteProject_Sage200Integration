@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();                       // the store where session data is kept in memory
 
+// left in for future updates if necessary, not being used at the moment
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".QuotesProject.Session";                 // recognisable in dev-tools

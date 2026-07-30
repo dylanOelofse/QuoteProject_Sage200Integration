@@ -51,6 +51,29 @@ namespace QuotesProject.Controllers
             }
         }
 
+        [HttpGet("Open/{quoteId}")]
+        public IActionResult Open(int quoteId)
+        {
+            if (quoteId <= 0)
+                return BadRequest("A valid quote Id is required");
+
+            try
+            {
+                _quoteService.GetQuoteById(quoteId);            // confirm it exists before storing the id
+                HttpContext.Session.SetInt32("OpenQuoteId", quoteId);
+
+                return RedirectToAction("Index", "QuoteLine");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Quote not found");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error opening quote: " + ex.Message);
+            }
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult CreateQuote(Quote quote)
