@@ -183,7 +183,9 @@ namespace IntegrationService
                             FROM				Quote q
                             LEFT JOIN			QuoteStaging2 qs on q.QuoteId = qs.CrmQuoteId
                             INNER JOIN			QuoteLine ql on ql.QuoteId = q.QuoteId
-                            WHERE				qs.Flag is null";
+                            						AND ISNULL(ql.Flag, '') <> 'dp'
+                            WHERE				qs.CrmQuoteId is null
+                            AND					ISNULL(q.Flag, '') <> 'dp'";
 
             using var command = new SqlCommand(query);
 
@@ -304,6 +306,29 @@ namespace IntegrationService
                             FROM			QuoteStaging2 qs
                             INNER JOIN		Quote q ON qs.CrmQuoteId = q.QuoteId
                             WHERE           q.Flag = 'dp'";
+
+            using var command = new SqlCommand(query);
+
+            return ExecuteDataTable(command);
+        }
+
+        // Quotes that were pushed to / pulled from Sage but no longer exist there as an open
+        // quote - either deleted, or converted to an order/invoice (DocType/DocState changed).
+        // These are flagged so the CRM list hides them; nothing is pushed back to Sage.
+        public static DataTable getConvertedOrDeletedQuotes()
+        {
+            string query = $@"
+                            SELECT DISTINCT		q.QuoteId
+                            FROM				[{crmDB}].dbo.Quote q
+                            INNER JOIN			[{crmDB}].dbo.QuoteStaging2 qs on qs.CrmQuoteId = q.QuoteId
+                            LEFT JOIN			[{sageDB}].dbo.InvNum i
+                            						ON i.OrderNum COLLATE DATABASE_DEFAULT = q.QuoteNumber COLLATE DATABASE_DEFAULT
+                            						AND i.DocType = 4
+                            						AND i.DocState = 1
+                            WHERE				i.AutoIndex is null
+                            AND					NULLIF(LTRIM(RTRIM(q.QuoteNumber)), '') is not null
+                            AND					ISNULL(q.Flag, '') not in ('dp', 'ds', 'cv')
+                            AND					ISNULL(qs.Flag, '') <> 'p'";
 
             using var command = new SqlCommand(query);
 

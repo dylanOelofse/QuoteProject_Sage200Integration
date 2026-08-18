@@ -278,8 +278,6 @@ namespace QuotesProject.Controllers
 
         // ---- Statements ----
 
-        // build one statement PDF: fill the report model, push it into the report's
-        // ObjectDataSource, render, export. Returns the file name + PDF bytes.
         private (string fileName, byte[] pdf) BuildStatement(int quoteId)
         {
             Quote quote = _quoteService.GetQuoteById(quoteId);
@@ -298,8 +296,7 @@ namespace QuotesProject.Controllers
 
             using var report = new QuoteReport();
 
-            // the report and its nested Lines detail report both resolve through this component,
-            // so fill the ObjectDataSource rather than report.DataSource
+            //Fill ObjectDataSource that  report uses with data
             var dataSource = report.ComponentStorage.OfType<ObjectDataSource>().First();
             dataSource.DataSource = new List<QuoteReportModel> { model };
 
@@ -308,8 +305,7 @@ namespace QuotesProject.Controllers
             using var ms = new MemoryStream();
             report.ExportToPdf(ms);
 
-            // quote numbers come from Sage — strip anything a file name can't hold 
-            // Find every character that is illegal in a filename, remove it by splitting the string, and join the remaining parts together using underscores.
+            // quote numbers come from Sage, strip anything a file name can't hold 
             string name = string.IsNullOrWhiteSpace(quote.QuoteNumber) ? $"Quote-{quote.Id}" : quote.QuoteNumber;
             name = string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
 
@@ -326,14 +322,13 @@ namespace QuotesProject.Controllers
 
             try
             {
-                // one quote → that single PDF
                 if (quoteIds.Length == 1)
                 {
                     var (fileName, pdf) = BuildStatement(quoteIds[0]);
                     return File(pdf, "application/pdf", fileName);
                 }
 
-                // several quotes → a flat zip: just the PDFs at the root, no folders
+                // several quotes = a flat zip: just the PDFs at the root, no folders
                 using var zipStream = new MemoryStream();
                 using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
                 {

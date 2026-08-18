@@ -37,6 +37,7 @@ namespace IntegrationPollingService
                 SyncSageQuotes.crmToStaging();
                 SyncSageQuotes.stagingToSage();
                 SyncSageQuotes.updateQuotes();
+                SyncSageQuotes.reconcileSageQuotes();
                 //SyncSageQuotes.deleteQuote();  //SalesOrders cannot be deleted from SDK only in pastel Evo
             }
 

@@ -199,6 +199,22 @@ namespace IntegrationPollingService
             }
         }
 
+        // Sage is the source of truth for whether a quote is still an open quote.
+        // Pure SQL - no Sage SDK call, so this runs even if the SDK is unavailable.
+        public static void reconcileSageQuotes()
+        {
+            DataTable goneQuotes = new DataTable();
+
+            goneQuotes = DatabaseEngine.getConvertedOrDeletedQuotes();
+
+            foreach (DataRow row in goneQuotes.Rows)
+            {
+                int QuoteId = Convert.ToInt32(row["QuoteId"]);
+
+                DatabaseEngine.updateQuoteFlag("cv", QuoteId);
+            }
+        }
+
         public static void deleteQuote()
         {
             DatabaseContext.Initialise(companyDB, commonDB, server, userName, password, serialNumber, authKey);

@@ -50,7 +50,7 @@
             password: document.getElementById("password").value
         };
 
-        // fetches the Anti-forgery token for [ValidateAntiForgeryToken] in the controller, we need to send the token in the header
+        // fetches the Anti-forgery token for [ValidateAntiForgeryToken] in the controller, send the token in the header
         const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         fetch("/Login", {

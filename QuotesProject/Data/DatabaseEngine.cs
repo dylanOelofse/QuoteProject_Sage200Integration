@@ -156,7 +156,9 @@ namespace QuotesProject.Data
                                 DueDate,
                                 InvoiceDate
                             FROM Quote
-                            WHERE Flag IS NULL OR Flag = 'us' OR Flag = 'up'
+                            -- whitelist: live quotes only. Excludes 'dp'/'ds' (deleted) and
+                            -- 'cv' (deleted or converted to an order/invoice in Sage).
+                            WHERE (Flag IS NULL OR Flag = 'us' OR Flag = 'up')
                             ORDER BY QuoteId DESC";
 
             using var command = new SqlCommand(query);

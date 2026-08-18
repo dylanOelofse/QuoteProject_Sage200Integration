@@ -309,8 +309,6 @@
                     .map(cb => parseInt(cb.value));
     }
 
-    // build the statement PDFs on the server and download them:
-    // one quote → a single PDF, several → a flat zip of PDFs
     function generateStatement() {
         const ids = getSelectedIds();
         if (ids.length === 0) { alert("Please select at least one quote."); return; }
