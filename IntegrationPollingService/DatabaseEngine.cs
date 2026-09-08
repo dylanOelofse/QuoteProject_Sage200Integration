@@ -110,7 +110,6 @@ namespace IntegrationService
                             FROM			[{sageDB}].dbo._btblInvoiceLines il
                             INNER JOIN      [{sageDB}].dbo.StkItem s ON  s.StockLink = il.iStockCodeID
                             INNER JOIN      [{sageDB}].dbo.InvNum i on i.AutoIndex = il.iInvoiceID
-                            LEFT JOIN       [{crmDB}].dbo.QuoteStaging2 qs ON i.AutoIndex = qs.SageQuoteId
                             WHERE           il.iInvoiceID = @SageQuoteId";
 
             using var command = new SqlCommand(query);
@@ -183,7 +182,7 @@ namespace IntegrationService
                             FROM				Quote q
                             LEFT JOIN			QuoteStaging2 qs on q.QuoteId = qs.CrmQuoteId
                             INNER JOIN			QuoteLine ql on ql.QuoteId = q.QuoteId
-                            						AND ISNULL(ql.Flag, '') <> 'dp'
+                            AND                 ISNULL(ql.Flag, '') <> 'dp'
                             WHERE				qs.CrmQuoteId is null
                             AND					ISNULL(q.Flag, '') <> 'dp'";
 
@@ -264,7 +263,7 @@ namespace IntegrationService
             return ExecuteDataTable(command);
         }
 
-        public static void updateCreatedQuotes(int sageQuoteId, string sageQuoteNum, int crmQuoteId, string flag, string message)  //change crmQuoteId to sageQuoteId
+        public static void updateCreatedQuotes(int sageQuoteId, string sageQuoteNum, int crmQuoteId, string flag, string message)  
         {
             string query = $@"
                             UPDATE              Quote
@@ -312,9 +311,6 @@ namespace IntegrationService
             return ExecuteDataTable(command);
         }
 
-        // Quotes that were pushed to / pulled from Sage but no longer exist there as an open
-        // quote - either deleted, or converted to an order/invoice (DocType/DocState changed).
-        // These are flagged so the CRM list hides them; nothing is pushed back to Sage.
         public static DataTable getConvertedOrDeletedQuotes()
         {
             string query = $@"

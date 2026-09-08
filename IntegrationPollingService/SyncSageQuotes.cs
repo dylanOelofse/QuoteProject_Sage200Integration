@@ -75,7 +75,6 @@ namespace IntegrationPollingService
             try
             {
                 DataTable newQuotes = new DataTable();
-
                 newQuotes = DatabaseEngine.GetNewQuotes();
 
                 foreach (DataRow row in newQuotes.Rows)
@@ -100,7 +99,6 @@ namespace IntegrationPollingService
                 DatabaseContext.Initialise(companyDB, commonDB, server, userName, password, serialNumber, authKey);
 
                 DataTable newQuotes = new DataTable();
-
                 newQuotes = DatabaseEngine.GetStagingQuotes();
 
                 foreach (DataRow row in newQuotes.Rows)
@@ -129,7 +127,7 @@ namespace IntegrationPollingService
                         });
                     }
 
-                    //foreach (DataRow line in quoteLines.Rows) // Alternative
+                    //foreach (DataRow line in quoteLines.Rows) 
                     //{
                     //    sageQuote.Detail.Add(new OrderDetail
                     //    {
@@ -160,7 +158,6 @@ namespace IntegrationPollingService
             DatabaseContext.Initialise(companyDB, commonDB, server, userName, password, serialNumber, authKey);
 
             DataTable updatePendingQuotes = new DataTable();
-
             updatePendingQuotes = DatabaseEngine.getUpdatePendingQuotes();
 
             foreach (DataRow row in updatePendingQuotes.Rows)
@@ -199,8 +196,6 @@ namespace IntegrationPollingService
             }
         }
 
-        // Sage is the source of truth for whether a quote is still an open quote.
-        // Pure SQL - no Sage SDK call, so this runs even if the SDK is unavailable.
         public static void reconcileSageQuotes()
         {
             DataTable goneQuotes = new DataTable();
