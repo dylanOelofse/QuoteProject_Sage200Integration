@@ -90,7 +90,7 @@ Both settings files are **gitignored** — they hold live credentials and are no
 
 ```jsonc
 {
-  "CompanyDB":    "NECSA Laboratories_Live",  // Sage company database
+  "CompanyDB":    "companyDatabase",  // Sage company database
   "CommonDB":     "SageCommon",
   "Server":       "DYLANOELOFSE",
   "UserName":     "sa",
@@ -194,8 +194,6 @@ is still open.
   is written and commented out in the timer for exactly that reason. Deleting is a soft delete:
   flag `dp`, drop out of the list, and let the reconciliation pass mark it `cv` once someone
   removes it in Sage.
-- **`Save()` and `Process()` are not the same call.** `Save()` leaves the order open and editable;
-  `Process()` posts it and takes it out of reach. Both push passes call `Save()` only.
 - **Cross-database joins need `COLLATE DATABASE_DEFAULT`.** The Sage company database and the app
   database do not share a collation, so `i.OrderNum = q.QuoteNumber` fails with a collation
   conflict until both sides are collated explicitly.
